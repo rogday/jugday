@@ -16,6 +16,9 @@ public class MapGenerator : MonoBehaviour
     public int seed;
     public Vector2 offset;
 
+    public float meshHeightMultiplier;
+    public AnimationCurve meshHeightCurve;
+
     public bool autoUpdate;
 
     public void GenerateMap() {
@@ -23,7 +26,7 @@ public class MapGenerator : MonoBehaviour
             octaves, persistance, lacunarity, offset);
 
         var display = FindObjectOfType<MapDisplay>();
-        display.DrawNoiseMap(noiseMap);
+        display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshHeightCurve));
     }
 
     private void OnValidate() {
