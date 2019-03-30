@@ -26,6 +26,7 @@ public class MapGenerator : MonoBehaviour
             octaves, persistance, lacunarity, offset);
 
         var display = FindObjectOfType<MapDisplay>();
+        display.UpdateHeights(minHeight, maxHeight);
         display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshHeightCurve));
     }
 
@@ -36,5 +37,17 @@ public class MapGenerator : MonoBehaviour
 
         octaves = Mathf.Max(octaves, 1);
         lacunarity = Mathf.Max(lacunarity, 1);
+    }
+
+    public float minHeight {
+        get {
+            return meshHeightMultiplier * meshHeightCurve.Evaluate(0);
+        }
+    }
+
+    public float maxHeight {
+        get {
+            return meshHeightMultiplier * meshHeightCurve.Evaluate(1);
+        }
     }
 }
