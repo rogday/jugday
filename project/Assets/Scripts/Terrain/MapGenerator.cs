@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
-    public int mapWidth;
-    public int mapHeight;
+    public int chunkSize;
     public float noiseScale;
 
     public int octaves;
@@ -19,20 +18,23 @@ public class MapGenerator : MonoBehaviour
     public float meshHeightMultiplier;
     public AnimationCurve meshHeightCurve;
 
+    public Material material;
+
     public bool autoUpdate;
 
-    public void GenerateMap() {
-        var noiseMap = Noise.GenerateNoiseMap(mapWidth, mapHeight, seed, noiseScale,
-            octaves, persistance, lacunarity, offset);
+    public void GenerateMap(Vector2 position) {
+        var noiseMap = Noise.GenerateNoiseMap(chunkSize, seed, noiseScale,
+            octaves, persistance, lacunarity, position * (chunkSize - 1));
+
+        Terrain t = FindObjectOfType<Terrain>();
 
         var display = FindObjectOfType<MapDisplay>();
-        display.UpdateHeights(minHeight, maxHeight);
-        display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshHeightCurve));
+        display.UpdateHeights(material, minHeight, maxHeight);
+        display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshHeightCurve), position * (chunkSize - 1), t.transform);
     }
 
     private void OnValidate() {
-        mapWidth = Mathf.Max(mapWidth, 1);
-        mapHeight = Mathf.Max(mapHeight, 1);
+        chunkSize = Mathf.Max(chunkSize, 1);
         noiseScale = Mathf.Max(noiseScale, float.Epsilon);
 
         octaves = Mathf.Max(octaves, 1);

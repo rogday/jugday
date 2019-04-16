@@ -51,12 +51,30 @@ public class MeshData
         triangles[triangleIndex++] = c;
     }
 
+    public void flatShading() {
+        var flatVertices = new Vector3[triangles.Length];
+        var flatUvs = new Vector2[triangles.Length];
+
+        for (int i = 0; i < triangles.Length; ++i) {
+            flatVertices[i] = vertices[triangles[i]];
+            flatUvs[i] = uvs[triangles[i]];
+            triangles[i] = i;
+        }
+
+        vertices = flatVertices;
+        uvs = flatUvs;
+    }
+
     public Mesh CreateMesh() {
         var mesh = new Mesh();
+
+        flatShading();
+
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.uv = uvs;
         mesh.RecalculateNormals();
+        
         return mesh;
     }
 }
